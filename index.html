@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion de Bibliothèque</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-book"></i>
+                    <div>
+                        <h1>Bibliothèque</h1>
+                        <p>Système de Gestion</p>
+                    </div>
+                </div>
+                <nav class="nav">
+                    <a href="#" class="nav-link">Accueil</a>
+                    <a href="#" class="nav-link">Catégories</a>
+                    <a href="#" class="nav-link">Emprunts</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main">
+        <div class="container">
+            <!-- Statistics Section -->
+            <div class="stats-section" id="statsSection" style="display: none;">
+                <div class="stats-grid">
+                    <div class="stat-card stat-card-blue">
+                        <div class="stat-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Total de livres</h3>
+                            <p class="stat-number" id="totalBooks">0</p>
+                            <span class="stat-label">Exemplaires en collection</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-orange">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Livres empruntés</h3>
+                            <p class="stat-number" id="borrowedBooks">0</p>
+                            <div class="progress-bar">
+                                <div class="progress-fill" id="borrowProgress"></div>
+                            </div>
+                            <span class="stat-label" id="borrowPercentage">0% de la collection</span>
+                        </div>
+                    </div>
+
+                    <div class="stat-card stat-card-green">
+                        <div class="stat-icon">
+                            <i class="fas fa-check-circle"></i>
+                        </div>
+                        <div class="stat-content">
+                            <h3>Disponibles</h3>
+                            <p class="stat-number" id="availableBooks">0</p>
+                            <span class="stat-label">Prêts à être empruntés</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Controls Section -->
+            <div class="controls-section">
+                <div class="search-filter">
+                    <div class="search-box">
+                        <i class="fas fa-search"></i>
+                        <input 
+                            type="text" 
+                            id="searchInput" 
+                            placeholder="Rechercher par titre, auteur ou ISBN..."
+                            class="search-input"
+                        >
+                    </div>
+
+                    <select id="categoryFilter" class="category-select">
+                        <option value="all">Toutes les catégories</option>
+                        <option value="Fiction">Fiction</option>
+                        <option value="Non-fiction">Non-fiction</option>
+                        <option value="Science">Science</option>
+                        <option value="History">Histoire</option>
+                        <option value="Biography">Biographie</option>
+                        <option value="Children">Enfants</option>
+                        <option value="Technology">Technologie</option>
+                    </select>
+                </div>
+
+                <div class="action-buttons">
+                    <button id="statsBtn" class="btn btn-outline btn-small">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Stats</span>
+                    </button>
+                    <button id="addBookBtn" class="btn btn-primary">
+                        <i class="fas fa-plus"></i>
+                        <span>Ajouter un livre</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Results Count -->
+            <div class="results-count">
+                <span id="resultCount">0</span> livre(s) trouvé(s)
+            </div>
+
+            <!-- Books Grid -->
+            <div class="books-grid" id="booksGrid">
+                <!-- Books will be inserted here -->
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <i class="fas fa-book-open"></i>
+                <h2>Aucun livre trouvé</h2>
+                <p>Essayez de modifier votre recherche ou d'ajouter un nouveau livre</p>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add/Edit Book Modal -->
+    <div class="modal" id="bookModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Ajouter un nouveau livre</h2>
+                <button class="modal-close" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+
+            <form id="bookForm" class="book-form">
+                <div class="form-group">
+                    <label for="bookTitle">Titre du livre *</label>
+                    <input type="text" id="bookTitle" required placeholder="Ex: Le Seigneur des Anneaux">
+                    <span class="error-message" id="titleError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookAuthor">Auteur *</label>
+                    <input type="text" id="bookAuthor" required placeholder="Ex: J.R.R. Tolkien">
+                    <span class="error-message" id="authorError"></span>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookISBN">ISBN *</label>
+                    <input type="text" id="bookISBN" required placeholder="Ex: 978-2253045199">
+                    <span class="error-message" id="isbnError"></span>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookCategory">Catégorie</label>
+                        <select id="bookCategory">
+                            <option value="Fiction">Fiction</option>
+                            <option value="Non-fiction">Non-fiction</option>
+                            <option value="Science">Science</option>
+                            <option value="History">Histoire</option>
+                            <option value="Biography">Biographie</option>
+                            <option value="Children">Enfants</option>
+                            <option value="Technology">Technologie</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="bookYear">Année de publication</label>
+                        <input type="number" id="bookYear" min="1000" max="2099">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="bookCopies">Nombre d'exemplaires *</label>
+                        <input type="number" id="bookCopies" required min="1" value="1">
+                        <span class="error-message" id="copiesError"></span>
+                    </div>
+
+                    <div class="form-group" id="borrowedGroup" style="display: none;">
+                        <label for="bookBorrowed">Exemplaires empruntés</label>
+                        <input type="number" id="bookBorrowed" min="0" value="0">
+                        <span class="error-message" id="borrowedError"></span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="bookDescription">Description</label>
+                    <textarea id="bookDescription" rows="3" placeholder="Décrivez brièvement le livre..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Couleur de couverture</label>
+                    <div class="color-picker">
+                        <button type="button" class="color-btn" data-color="from-amber-500 to-orange-600" style="background: linear-gradient(135deg, #f59e0b, #dc2626);"></button>
+                        <button type="button" class="color-btn" data-color="from-red-500 to-red-700" style="background: linear-gradient(135deg, #ef4444, #b91c1c);"></button>
+                        <button type="button" class="color-btn" data-color="from-blue-500 to-blue-700" style="background: linear-gradient(135deg, #3b82f6, #1e40af);"></button>
+                        <button type="button" class="color-btn" data-color="from-purple-500 to-indigo-600" style="background: linear-gradient(135deg, #a855f7, #4f46e5);"></button>
+                        <button type="button" class="color-btn" data-color="from-cyan-500 to-blue-600" style="background: linear-gradient(135deg, #06b6d4, #2563eb);"></button>
+                        <button type="button" class="color-btn" data-color="from-green-500 to-emerald-600" style="background: linear-gradient(135deg, #22c55e, #059669);"></button>
+                        <button type="button" class="color-btn" data-color="from-pink-500 to-rose-600" style="background: linear-gradient(135deg, #ec4899, #e11d48);"></button>
+                        <button type="button" class="color-btn" data-color="from-yellow-500 to-orange-600" style="background: linear-gradient(135deg, #eab308, #dc2626);"></button>
+                    </div>
+                    <input type="hidden" id="bookColor" value="from-blue-500 to-blue-700">
+                </div>
+
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <span id="submitBtnText">Ajouter le livre</span>
+                    </button>
+                    <button type="button" class="btn btn-outline btn-block" id="cancelBtn">
+                        Annuler
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Overlay -->
+    <div class="modal-overlay" id="modalOverlay"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
