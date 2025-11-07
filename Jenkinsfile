@@ -4,8 +4,8 @@ pipeline {
     // Configuration des paramètres Slack dans le bloc environment
     environment {
         // Le nom de la configuration Slack est "Jenkins-Notifier" comme spécifié par l'utilisateur.
-        SLACK_CHANNEL = '#jenkins-builds'
-        SLACK_CONFIG = 'Jenkins-Notifier'
+        SLACK_CHANNEL = '#jenkins'
+        SLACK_CONFIG = 'Notifier'
     }
     
     // Définition des options globales pour le pipeline
