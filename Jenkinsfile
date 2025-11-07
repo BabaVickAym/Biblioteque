@@ -34,7 +34,7 @@ pipeline {
                 checkout scm // Clone https://github.com/BabaVickAym/Biblioteque.git
                 script {
                     // Clone le dépôt restaurant dans un sous-répertoire
-                    sh 'git clone https://github.com/BabaVicAym/restaurant.git webapp'
+                    sh 'git clone https://github.com/BabaVickAym/restaurant.git webapp'
                     slackSend(
                         channel: env.SLACK_CHANNEL,
                         color: 'good',
