@@ -4,7 +4,7 @@ pipeline {
     environment {
         SLACK_CHANNEL = '#jenkins'
         SLACK_CONFIG = 'Notifier'
-        APP_URL = 'http://192.168.99:80' // Mettez à jour avec l'adresse IP de votre machine si nécessaire
+        APP_URL = 'http://192.168.99:80' // Mettez à jour avec l'adresse IP de votre machine si nécessair
     }
    
     options {
