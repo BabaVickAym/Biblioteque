@@ -1,26 +1,20 @@
 pipeline {
     agent any
-    
-    // Configuration des paramètres Slack dans le bloc environment
+   
     environment {
-        // Le nom de la configuration Slack est "Jenkins-Notifier" comme spécifié par l'utilisateur.
         SLACK_CHANNEL = '#jenkins'
         SLACK_CONFIG = 'Notifier'
     }
-    
-    // Définition des options globales pour le pipeline
+   
     options {
-        // Option pour nettoyer l'espace de travail après l'exécution
         skipDefaultCheckout()
-        // Définir le fuseau horaire pour les logs
         timestamps()
     }
-
+    
     stages {
         stage('Démarrage du Pipeline') {
             steps {
                 script {
-                    // Notification de début de build
                     slackSend(
                         channel: env.SLACK_CHANNEL,
                         color: 'good',
@@ -31,13 +25,11 @@ pipeline {
                 }
             }
         }
-        
+       
         stage('Checkout du Code') {
             steps {
-                // Récupération du code depuis GitHub
                 checkout scm
                 script {
-                    // Notification de succès de l'étape
                     slackSend(
                         channel: env.SLACK_CHANNEL,
                         color: 'good',
@@ -48,13 +40,13 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Build') {
             steps {
-                echo 'Simuler l\'étape de construction (par exemple, npm install, mvn package, docker build)'
-                docker build -t webapp:v1 .
-                docker run --name webapp -d -p 90:90 webapp:v1
                 script {
+                    // Encapsuler les commandes Docker dans un bloc sh
+                    sh 'docker build -t webapp:v1 .'
+                    sh 'docker run --name webapp -d -p 90:90 webapp:v1'
                     // Notification de succès de l'étape
                     slackSend(
                         channel: env.SLACK_CHANNEL,
@@ -66,14 +58,11 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Test') {
             steps {
                 echo 'Simuler l\'étape de test (par exemple, npm test, mvn test)'
-                // Remplacer ceci par vos commandes de test réelles
-                // sh 'npm test'
                 script {
-                    // Notification de succès de l'étape
                     slackSend(
                         channel: env.SLACK_CHANNEL,
                         color: 'good',
@@ -84,14 +73,11 @@ pipeline {
                 }
             }
         }
-
+        
         stage('Déploiement') {
             steps {
                 echo 'Simuler l\'étape de déploiement sur l\'environnement DEV'
-                // Remplacer ceci par vos commandes de déploiement réelles
-                // sh 'ssh user@dev-server "deploy-script.sh"'
                 script {
-                    // Notification de succès de l'étape
                     slackSend(
                         channel: env.SLACK_CHANNEL,
                         color: 'good',
@@ -103,16 +89,13 @@ pipeline {
             }
         }
     }
-    
-    // Post-actions : Exécutées après toutes les étapes, quel que soit le résultat
+   
     post {
         always {
-            // Nettoyage de l'espace de travail
             cleanWs()
         }
         success {
             script {
-                // Notification de succès final
                 slackSend(
                     channel: env.SLACK_CHANNEL,
                     color: 'good',
@@ -124,7 +107,6 @@ pipeline {
         }
         failure {
             script {
-                // Notification d'échec
                 slackSend(
                     channel: env.SLACK_CHANNEL,
                     color: 'danger',
