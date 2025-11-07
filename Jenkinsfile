@@ -1,5 +1,5 @@
 pipeline {
-    agent any
+    agent none // No default agent
    
     environment {
         SLACK_CHANNEL = '#jenkins'
@@ -13,6 +13,7 @@ pipeline {
     
     stages {
         stage('Démarrage du Pipeline') {
+            agent any
             steps {
                 script {
                     slackSend(
@@ -27,6 +28,7 @@ pipeline {
         }
        
         stage('Checkout du Code') {
+            agent any
             steps {
                 checkout scm
                 script {
@@ -42,12 +44,17 @@ pipeline {
         }
         
         stage('Build') {
+            agent {
+                docker {
+                    image 'docker:24.0.6' // Use a specific Docker image version
+                    args '-v /var/run/docker.sock:/var/run/docker.sock --user root'
+                }
+            }
             steps {
                 script {
-                    // Encapsuler les commandes Docker dans un bloc sh
+                    sh 'docker rm -f webapp || true' // Clean up existing container if present
                     sh 'docker build -t webapp:v1 .'
                     sh 'docker run --name webapp -d -p 90:90 webapp:v1'
-                    // Notification de succès de l'étape
                     slackSend(
                         channel: env.SLACK_CHANNEL,
                         color: 'good',
@@ -60,6 +67,7 @@ pipeline {
         }
         
         stage('Test') {
+            agent any
             steps {
                 echo 'Simuler l\'étape de test (par exemple, npm test, mvn test)'
                 script {
@@ -75,6 +83,7 @@ pipeline {
         }
         
         stage('Déploiement') {
+            agent any
             steps {
                 echo 'Simuler l\'étape de déploiement sur l\'environnement DEV'
                 script {
