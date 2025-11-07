@@ -52,9 +52,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Simuler l\'étape de construction (par exemple, npm install, mvn package, docker build)'
-                // Remplacer ceci par vos commandes de build réelles
-                // sh 'npm install'
-                // sh 'npm run build'
+                docker build -t webapp:v1 .
+                docker run --name webapp -d -p 90:90 webapp:v1
                 script {
                     // Notification de succès de l'étape
                     slackSend(
